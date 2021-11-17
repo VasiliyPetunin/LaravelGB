@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\News;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
 class IndexController extends Controller
@@ -19,21 +20,12 @@ class IndexController extends Controller
             $request->flash();
             $arr = $request->except('_token');
 
-            if (count($arr) < 5) {
-                $arr['isPrivate'] = 0;
+            if (!isset($arr['isPrivate'])) {
+                $arr['isPrivate'] = false;
             }
+            
+            $id = DB::table('news')->insertGetId($arr);
 
-            $id = $news->createIdForNewNews();
-            $arr['id'] = $id;
-
-            $currentNews = $news->getNews();
-            $currentNews[] = $arr;
-
-            File::put(storage_path() . '/news.json', json_encode($currentNews, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
-
-            //TODO прочитать файл новостей в массив
-            //TODO добавить в массив
-            //TODO сохранить новость в файл в json
             return redirect()->route('news.one', $id);
         }
 

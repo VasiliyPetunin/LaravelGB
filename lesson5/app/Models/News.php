@@ -22,10 +22,6 @@ class News
         return DB::table('news')->get();
     }
 
-    public function createIdForNewNews() {
-        return count($this->getNews()) + 1;
-    }
-
     public function getNewsByCategorySlug($slug) {
         $id = $this->category->getCategoryIdBySlug($slug);
         return $this->getNewsByCategoryId($id);
